@@ -1,27 +1,37 @@
 # SASS（SCSS)について
 Node-sass(lib Sass)がdeprecatedになるのでdart-sass移行を推奨。  
 * scssの@importやglobが使えない  
-* @importの代わりに@useと@forwardを使う。
+* @importの代わりに@useと@forwardを使う。  
+  variablesを読み込んだfunctionsを読み込んだscss内でvariablesを参照したいとき@forwardsを使う
 * 数式計算に@use sass:mathが必要になること(なくても動くけど怒られる)  
 * @use、@forwardは他のルールより前に宣言する必要がある。  
-そのためこういった書き方はできない。
-```
-.class {
-  @use "./elements";
-}
-```
+  そのため@importのようにネストさせることはできない
+  ```
+  .class {
+    @use "./elements"; // エラー
+  }
+  ```
 
-* @use、@forwardしたscss内の関数やミックスインなどを使う場合以下のように書く必要がある。
-```
-@use "./_functions" as f;
+* @useしたscss内の関数やミックスインなどを使う場合以下のように書く必要がある。
+  ```
+  @use "./functions" as *; //名前空間を指定することもできる
 
-@include f.mixin() {
+  @include mixin() {
 
-}
-```
+  }
+  ```
+
+## Policy
+個人的に心がけていること
+* 基本的にはFLOCSSで命名してます。  
+* スタイルを指定するすべての要素にクラス名を付けています。  
+* パーシャルは細かく  
+  1つのBlock、行数が多くなる場合はElement単位で分割する
+* メディアクエリーは一括ではなく個々のブロック内で指定  
+* ページ数の多い案件では基礎・共通要素の多いcssとページ別のcssに出力して読み込む。  
+  LPやページが少ない案件では1個のCSSにまとめる。
 ## Tips
-* 極力ショートハンドは使わない  
-  可読性やデフォルト値が設定されてしまう点からもショートハンドは避けます。  
+
 * :not()セレクタ  
   :not(:last-child)でボーダー引いたりで使えます。
 * font-feature-setting: "palt";  
@@ -33,9 +43,9 @@ Node-sass(lib Sass)がdeprecatedになるのでdart-sass移行を推奨。
 * css-triangle  
   borderを使ったcssの三角形です。  
   10年以上前からある手法ですが、▶リンク みたいなのでは今でも使います。
-* linear-gradient /   
+* linear-gradient     
   線形グラデーションです。   
-  repeating-linear-gradientを使うとストライプやドット、グリッドなんかも作れます。 
+  repeating-linear-gradientを使うとストライプやドット、グリッドなんかも作れます。  
 * aspect-ratio  
   アスペクト比を指定できます。  
   要素の幅(高さ)に対してアスペクト比を保ちながら高さ(幅)が変化するようになります。  
@@ -61,8 +71,9 @@ Node-sass(lib Sass)がdeprecatedになるのでdart-sass移行を推奨。
 
 
 ## scss placeholder
-クラス名に%を付けて宣言し@extendで使用する  
-ほぼ同じだけど色だけ違うみたいな要素に使う
+任意の名前に%を付けて宣言し@extendで使用する。  
+ほぼ同じだけど色だけ違うみたいな要素に使う。  
+mixinと違い何回継承してもplaceholderの内容は1つしか出力されない。
 ```
 %example {
   position: absolute;
@@ -127,9 +138,9 @@ $breakpoints: (
 }
 ```
 
-### メディアクエリのｐｘズレ
+### メディアクエリのピクセルズレ
 Windowsは解像度のほかに表示倍率の設定があり、この設定によってブラウザのpxが微妙にズレる。  
-そのためブレイクポイントに±1pxで切り替えると境目で適用されなくなります。 ([参考](https://twitter.com/shoko1851/status/1350669489571037184?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1350669489571037184%7Ctwgr%5Edbf2d56348e60bbb1eab1c70f7eeae74b1d65dca%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fembed.zenn.studio%2Ftweetzenn-embedded__08f5ae24b2c3b)) . 
+そのためブレイクポイントに±1pxで切り替えると境目で適用されなくなります。 ([参考](https://twitter.com/shoko1851/status/1350669489571037184?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1350669489571037184%7Ctwgr%5Edbf2d56348e60bbb1eab1c70f7eeae74b1d65dca%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fembed.zenn.studio%2Ftweetzenn-embedded__08f5ae24b2c3b))  
 not演算子を使って反転させるほうが論理的です。
 
 ### レベル4の構文拡張の使用
