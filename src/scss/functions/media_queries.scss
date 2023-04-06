@@ -1,0 +1,30 @@
+@use "sass:math";
+@use "sass:map";
+
+$breakpoints: (
+  mobile: "480",
+  xsmall: "512",
+  small: "640",
+  medium: "768",
+  large: "960",
+  xlarge: "1200",
+  extend: "1440",
+);
+
+@mixin mq($breakpoint: "medium", $mode:"gte", $num: "0") {
+  @if $num > 0 {
+    $bp: $num;
+  } @else {
+    $bp: map.get($breakpoints, $breakpoint);
+  }
+    
+  @if $mode == "gte" {
+    @media all and (min-width: #{ $bp }px) {
+      @content;
+    }
+  } @else if $mode =="lte" {
+    @media not all and (min-width: #{ $bp }px) {
+      @content;
+    }
+  }
+}
